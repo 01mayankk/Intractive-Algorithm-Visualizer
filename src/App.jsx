@@ -1,14 +1,34 @@
-import React from 'react';
-import SortingVisualizer from './visualizers/SortingVisualizer';
+import React, { useRef } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import SortingVisualizer from './pages/SortingVisualizer';
+import SearchingVisualizer from './pages/SearchingVisualizer';
+import GraphVisualizer from './pages/GraphVisualizer';
+
+import './App.css';
 
 function App() {
+  const sortRef = useRef();
+
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-      <h1 className="text-3xl font-bold my-6 text-indigo-700">
-        Interactive Algorithm Visualizer
-      </h1>
-      <SortingVisualizer />
-    </div>
+    <Router>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <div className="flex flex-1">
+          <Sidebar sortRef={sortRef} />
+          <main className="flex-1 p-4 overflow-auto">
+            <Routes>
+              <Route path="/" element={<Navigate to="/sorting" />} />
+              <Route path="/sorting" element={<SortingVisualizer ref={sortRef} />} />
+              <Route path="/searching" element={<SearchingVisualizer />} />
+              <Route path="/graph" element={<GraphVisualizer />} />
+            </Routes>
+          </main>
+        </div>
+      </div>
+    </Router>
   );
 }
 
