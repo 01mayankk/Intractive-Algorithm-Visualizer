@@ -16,6 +16,9 @@ const GraphCanvas = ({
   onAddEdge,
   activeNodeId,
   setActiveNodeId,
+  isDirected,
+  isEdgeEditMode,
+  onUpdateEdgeWeight,
 }) => {
   const canvasRef = useRef(null);
   const { graphAlgorithm, graphSpeed } = useSelector((state) => state.graph);
@@ -23,14 +26,43 @@ const GraphCanvas = ({
 
   useEffect(() => {
     drawGraph();
-  }, [nodes, edges, activeNodeId]);
+  }, [nodes, edges, activeNodeId, isDirected]);
+
+  const drawArrow = (ctx, from, to) => {
+    const angle = Math.atan2(to.y - from.y, to.x - from.x);
+    const headlen = 10;
+
+    const startX = from.x + NODE_RADIUS * Math.cos(angle);
+    const startY = from.y + NODE_RADIUS * Math.sin(angle);
+    const endX = to.x - NODE_RADIUS * Math.cos(angle);
+    const endY = to.y - NODE_RADIUS * Math.sin(angle);
+
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+
+    // Arrowhead
+    ctx.beginPath();
+    ctx.moveTo(endX, endY);
+    ctx.lineTo(
+      endX - headlen * Math.cos(angle - Math.PI / 6),
+      endY - headlen * Math.sin(angle - Math.PI / 6)
+    );
+    ctx.lineTo(
+      endX - headlen * Math.cos(angle + Math.PI / 6),
+      endY - headlen * Math.sin(angle + Math.PI / 6)
+    );
+    ctx.closePath();
+    ctx.fillStyle = EDGE_COLOR;
+    ctx.fill();
+  };
 
   const drawGraph = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw edges with weights
     ctx.strokeStyle = EDGE_COLOR;
     ctx.lineWidth = 2;
     ctx.font = '14px Arial';
@@ -39,20 +71,22 @@ const GraphCanvas = ({
     edges.forEach((edge) => {
       const from = nodes.find((n) => n.id === edge.from);
       const to = nodes.find((n) => n.id === edge.to);
-      if (from && to) {
+      if (!from || !to) return;
+
+      if (isDirected) {
+        drawArrow(ctx, from, to);
+      } else {
         ctx.beginPath();
         ctx.moveTo(from.x, from.y);
         ctx.lineTo(to.x, to.y);
         ctx.stroke();
-
-        // Draw weight label at the midpoint
-        const midX = (from.x + to.x) / 2;
-        const midY = (from.y + to.y) / 2;
-        ctx.fillText(edge.weight ?? 1, midX, midY - 6);
       }
+
+      const midX = (from.x + to.x) / 2;
+      const midY = (from.y + to.y) / 2;
+      ctx.fillText(edge.weight ?? 1, midX, midY - 6);
     });
 
-    // Draw nodes
     nodes.forEach((node) => {
       ctx.beginPath();
       ctx.arc(node.x, node.y, NODE_RADIUS, 0, 2 * Math.PI);
@@ -69,9 +103,7 @@ const GraphCanvas = ({
       ctx.strokeStyle = '#000';
       ctx.stroke();
 
-      // Node label
       ctx.fillStyle = '#fff';
-      ctx.font = '14px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(node.id, node.x, node.y);
@@ -79,9 +111,28 @@ const GraphCanvas = ({
   };
 
   const getClickedNode = (x, y) => {
-    return nodes.find(
-      (node) => Math.hypot(node.x - x, node.y - y) <= NODE_RADIUS + 5
-    );
+    return nodes.find((node) => Math.hypot(node.x - x, node.y - y) <= NODE_RADIUS + 5);
+  };
+
+  const getClickedEdge = (x, y) => {
+    for (let edge of edges) {
+      const from = nodes.find((n) => n.id === edge.from);
+      const to = nodes.find((n) => n.id === edge.to);
+      if (!from || !to) continue;
+
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const lengthSq = dx * dx + dy * dy;
+      const t = ((x - from.x) * dx + (y - from.y) * dy) / lengthSq;
+
+      if (t > 0 && t < 1) {
+        const closestX = from.x + t * dx;
+        const closestY = from.y + t * dy;
+        const dist = Math.hypot(x - closestX, y - closestY);
+        if (dist < 10) return edge;
+      }
+    }
+    return null;
   };
 
   const buildAdjList = () => {
@@ -89,7 +140,7 @@ const GraphCanvas = ({
     nodes.forEach((n) => (adjList[n.id] = []));
     edges.forEach(({ from, to }) => {
       adjList[from].push(to);
-      adjList[to].push(from);
+      if (!isDirected) adjList[to].push(from);
     });
     return adjList;
   };
@@ -107,6 +158,18 @@ const GraphCanvas = ({
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+
+    if (isEdgeEditMode) {
+      const edge = getClickedEdge(x, y);
+      if (edge) {
+        const newWeight = parseInt(prompt('Update edge weight:', edge.weight));
+        if (!isNaN(newWeight)) {
+          onUpdateEdgeWeight(edge, newWeight);
+        }
+        return;
+      }
+    }
+
     const clickedNode = getClickedNode(x, y);
 
     if (!clickedNode) {
@@ -122,13 +185,10 @@ const GraphCanvas = ({
         setActiveNodeId(null);
       } else {
         const graph = buildAdjList();
-        let order = [];
-
-        if (graphAlgorithm === 'bfs') {
-          order = bfs(graph, clickedNode.id);
-        } else if (graphAlgorithm === 'dfs') {
-          order = dfs(graph, clickedNode.id);
-        }
+        const order =
+          graphAlgorithm === 'bfs'
+            ? bfs(graph, clickedNode.id)
+            : dfs(graph, clickedNode.id);
 
         await animateTraversal(order);
         setActiveNodeId(null);

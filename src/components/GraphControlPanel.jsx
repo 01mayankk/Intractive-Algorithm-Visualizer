@@ -3,14 +3,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setGraphAlgorithm,
   setGraphSpeed,
-  setGraphMode,
 } from '../redux/graphSlice';
 
 const GraphControlPanel = ({
-  onAddNode,
-  onAddEdge,
-  onReset,
-  onVisualize,
+  onAddNode = () => {},
+  onAddEdge = () => {},
+  onReset = () => {},
+  onVisualize = () => {},
+  onToggleDirected = () => {},
+  isDirected = true,
+  onToggleEdgeEdit = () => {},
+  isEdgeEditMode = false,
 }) => {
   const dispatch = useDispatch();
   const { graphAlgorithm, graphSpeed } = useSelector((state) => state.graph);
@@ -25,7 +28,7 @@ const GraphControlPanel = ({
 
   return (
     <div className="flex flex-col items-center gap-6 mb-6">
-      {/* Algorithm and Controls */}
+      {/* === Algorithm & Controls === */}
       <div className="flex flex-wrap justify-center gap-4">
         <select
           value={graphAlgorithm}
@@ -34,7 +37,7 @@ const GraphControlPanel = ({
         >
           <option value="bfs">Breadth First Search (BFS)</option>
           <option value="dfs">Depth First Search (DFS)</option>
-          {/* Add tree algorithms like preorder, inorder, postorder later */}
+          {/* Future Tree traversal options can be added here */}
         </select>
 
         <button
@@ -66,7 +69,7 @@ const GraphControlPanel = ({
         </button>
       </div>
 
-      {/* Animation Speed Slider */}
+      {/* === Speed Slider === */}
       <div className="w-full max-w-md px-4">
         <label className="block text-center text-gray-700 font-medium mb-1">
           Animation Speed: {graphSpeed}ms
@@ -80,6 +83,31 @@ const GraphControlPanel = ({
           onChange={handleSpeedChange}
           className="w-full"
         />
+      </div>
+
+      {/* === Toggles === */}
+      <div className="flex flex-wrap justify-center gap-6 mt-4">
+        <button
+          onClick={onToggleDirected}
+          className={`px-4 py-2 rounded ${
+            isDirected
+              ? 'bg-purple-600 text-white hover:bg-purple-700'
+              : 'bg-purple-100 text-purple-800 hover:bg-purple-200'
+          }`}
+        >
+          {isDirected ? 'Directed Graph ON' : 'Directed Graph OFF'}
+        </button>
+
+        <button
+          onClick={onToggleEdgeEdit}
+          className={`px-4 py-2 rounded ${
+            isEdgeEditMode
+              ? 'bg-pink-600 text-white hover:bg-pink-700'
+              : 'bg-pink-100 text-pink-800 hover:bg-pink-200'
+          }`}
+        >
+          {isEdgeEditMode ? 'Edge Edit Mode ON' : 'Edge Edit Mode OFF'}
+        </button>
       </div>
     </div>
   );

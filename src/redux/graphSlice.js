@@ -1,15 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  graphAlgorithm: 'bfs',       // bfs | dfs | preorder | inorder | postorder
-  graphSpeed: 300,             // Delay between steps
-  graphMode: 'graph',          // 'graph' or 'tree'
+  graphAlgorithm: 'bfs',      // bfs | dfs | preorder | inorder | postorder
+  graphSpeed: 300,            // Delay between steps
 
-  nodes: [],                   // { id, x, y }
-  edges: [],                   // { from, to }
+  graphMode: {
+    type: 'graph',            // 'graph' or 'tree'
+    directed: true,           // true for directed, false for undirected
+  },
 
-  selectedNode: null,          // For building edges
-  visitedNodes: [],            // Track visited nodes during animation
+  nodes: [],                  // { id, x, y }
+  edges: [],                  // { from, to, weight }
+
+  selectedNode: null,         // For traversal start
+  visitedNodes: [],           // For animation tracking
 };
 
 const graphSlice = createSlice({
@@ -23,7 +27,11 @@ const graphSlice = createSlice({
       state.graphSpeed = action.payload;
     },
     setGraphMode: (state, action) => {
-      state.graphMode = action.payload;
+      // Expects { type?, directed? }
+      if (action.payload.type) state.graphMode.type = action.payload.type;
+      if (typeof action.payload.directed === 'boolean') {
+        state.graphMode.directed = action.payload.directed;
+      }
     },
     setNodes: (state, action) => {
       state.nodes = action.payload;

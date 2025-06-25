@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import GraphCanvas from '../components/GraphCanvas';
 import GraphControlPanel from '../components/GraphControlPanel';
@@ -17,9 +17,16 @@ const VISITED_COLOR = '#10b981';
 
 const GraphVisualizer = () => {
   const dispatch = useDispatch();
-  const { nodes, edges, graphAlgorithm, graphSpeed, selectedNode } = useSelector(
-    (state) => state.graph
-  );
+  const {
+    nodes,
+    edges,
+    graphAlgorithm,
+    graphSpeed,
+    selectedNode,
+  } = useSelector((state) => state.graph);
+
+  const [isDirected, setIsDirected] = useState(false);
+  const [isEdgeEditMode, setIsEdgeEditMode] = useState(false);
 
   const onAddNode = (coords) => {
     const newNode = {
@@ -29,26 +36,40 @@ const GraphVisualizer = () => {
     dispatch(setNodes([...nodes, newNode]));
   };
 
-  const onAddEdge = (fromId, toId) => {
+  const onAddEdge = (fromId, toId, weight = 1) => {
     const exists = edges.some(
       (e) =>
         (e.from === fromId && e.to === toId) ||
-        (e.from === toId && e.to === fromId)
+        (!isDirected && e.from === toId && e.to === fromId)
     );
+
     if (!exists) {
-      const weightInput = prompt('Enter edge weight (default 1):', '1');
-      const weight = parseInt(weightInput);
-      dispatch(
-        setEdges([
-          ...edges,
-          {
-            from: fromId,
-            to: toId,
-            weight: isNaN(weight) ? 1 : weight,
-          },
-        ])
-      );
+      dispatch(setEdges([...edges, { from: fromId, to: toId, weight }]));
+    } else if (isEdgeEditMode) {
+      let newWeight = prompt(`Edit weight for edge ${fromId} → ${toId}:`, '1');
+      newWeight = parseInt(newWeight);
+      if (isNaN(newWeight) || newWeight < 0) newWeight = 1;
+
+      const updated = edges.map((e) => {
+        if (
+          (e.from === fromId && e.to === toId) ||
+          (!isDirected && e.from === toId && e.to === fromId)
+        ) {
+          return { ...e, weight: newWeight };
+        }
+        return e;
+      });
+      dispatch(setEdges(updated));
     }
+  };
+
+  const onUpdateEdgeWeight = (targetEdge, newWeight) => {
+    const updatedEdges = edges.map((e) =>
+      e.from === targetEdge.from && e.to === targetEdge.to
+        ? { ...e, weight: newWeight }
+        : e
+    );
+    dispatch(setEdges(updatedEdges));
   };
 
   const onReset = () => {
@@ -67,13 +88,14 @@ const GraphVisualizer = () => {
 
     const animations =
       graphAlgorithm === 'bfs'
-        ? bfs(selectedNode, edges)
-        : dfs(selectedNode, edges);
+        ? bfs(selectedNode, edges, isDirected)
+        : dfs(selectedNode, edges, isDirected);
 
     animations.forEach((step, i) => {
       setTimeout(() => {
         const node = nodes.find((n) => n.id === step.node);
         if (!node) return;
+
         const selector = `circle[cx="${node.x}"][cy="${node.y}"]`;
         const element = document.querySelector(selector);
 
@@ -98,6 +120,10 @@ const GraphVisualizer = () => {
         onAddEdge={onAddEdge}
         onReset={onReset}
         onVisualize={visualize}
+        onToggleDirected={() => setIsDirected((prev) => !prev)}
+        onToggleEdgeEdit={() => setIsEdgeEditMode((prev) => !prev)}
+        isDirected={isDirected}
+        isEdgeEditMode={isEdgeEditMode}
       />
 
       <GraphCanvas
@@ -105,6 +131,11 @@ const GraphVisualizer = () => {
         edges={edges}
         onAddNode={onAddNode}
         onAddEdge={onAddEdge}
+        setActiveNodeId={(id) => dispatch(setSelectedNode(id))}
+        activeNodeId={selectedNode}
+        isDirected={isDirected}
+        isEdgeEditMode={isEdgeEditMode}
+        onUpdateEdgeWeight={onUpdateEdgeWeight}
       />
     </div>
   );
