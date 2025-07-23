@@ -8,6 +8,8 @@ const EDGE_COLOR = '#888';
 const NODE_COLOR = '#4f46e5';
 const VISITED_COLOR = '#10b981';
 const SELECTED_COLOR = '#facc15';
+const GOAL_COLOR = '#e11d48'; // A nice red color for the goal
+const PATH_COLOR = '#3b82f6'; // A blue for the final path
 
 const GraphCanvas = ({
   nodes,
@@ -15,20 +17,45 @@ const GraphCanvas = ({
   onAddNode,
   onAddEdge,
   activeNodeId,
+  goalNodeId,
   setActiveNodeId,
   isDirected,
   isEdgeEditMode,
   onUpdateEdgeWeight,
+  onVisualize,
+  animations,
 }) => {
   const canvasRef = useRef(null);
-  const { graphAlgorithm, graphSpeed } = useSelector((state) => state.graph);
+  const { graphSpeed } = useSelector((state) => state.graph);
   const visitedRef = useRef(new Set());
+  const pathRef = useRef(new Set());
 
   useEffect(() => {
     drawGraph();
-  }, [nodes, edges, activeNodeId, isDirected]);
+  }, [nodes, edges, activeNodeId, goalNodeId, isDirected]);
 
-  const drawArrow = (ctx, from, to) => {
+  useEffect(() => {
+    if (animations && animations.length > 0) {
+      animate(animations);
+    }
+  }, [animations]);
+
+  const animate = async (animations) => {
+    visitedRef.current.clear();
+    pathRef.current.clear();
+
+    for (const anim of animations) {
+      if (anim.type === 'visit') {
+        visitedRef.current.add(anim.node);
+      } else if (anim.type === 'path') {
+        anim.nodes.forEach(nodeId => pathRef.current.add(nodeId));
+      }
+      drawGraph();
+      await new Promise((res) => setTimeout(res, graphSpeed));
+    }
+  };
+
+  const drawArrow = (ctx, from, to, isPath) => {
     const angle = Math.atan2(to.y - from.y, to.x - from.x);
     const headlen = 10;
 
@@ -36,6 +63,10 @@ const GraphCanvas = ({
     const startY = from.y + NODE_RADIUS * Math.sin(angle);
     const endX = to.x - NODE_RADIUS * Math.cos(angle);
     const endY = to.y - NODE_RADIUS * Math.sin(angle);
+
+    ctx.save();
+    ctx.strokeStyle = isPath ? PATH_COLOR : EDGE_COLOR;
+    ctx.lineWidth = isPath ? 4 : 2;
 
     ctx.beginPath();
     ctx.moveTo(startX, startY);
@@ -54,8 +85,9 @@ const GraphCanvas = ({
       endY - headlen * Math.sin(angle + Math.PI / 6)
     );
     ctx.closePath();
-    ctx.fillStyle = EDGE_COLOR;
+    ctx.fillStyle = isPath ? PATH_COLOR : EDGE_COLOR;
     ctx.fill();
+    ctx.restore();
   };
 
   const drawGraph = () => {
@@ -73,13 +105,19 @@ const GraphCanvas = ({
       const to = nodes.find((n) => n.id === edge.to);
       if (!from || !to) return;
 
+      const isPath = pathRef.current.has(from.id) && pathRef.current.has(to.id);
+
       if (isDirected) {
-        drawArrow(ctx, from, to);
+        drawArrow(ctx, from, to, isPath);
       } else {
+        ctx.save();
+        ctx.strokeStyle = isPath ? PATH_COLOR : EDGE_COLOR;
+        ctx.lineWidth = isPath ? 4 : 2;
         ctx.beginPath();
         ctx.moveTo(from.x, from.y);
         ctx.lineTo(to.x, to.y);
         ctx.stroke();
+        ctx.restore();
       }
 
       const midX = (from.x + to.x) / 2;
@@ -91,10 +129,14 @@ const GraphCanvas = ({
       ctx.beginPath();
       ctx.arc(node.x, node.y, NODE_RADIUS, 0, 2 * Math.PI);
 
-      if (visitedRef.current.has(node.id)) {
+      if (pathRef.current.has(node.id)) {
+        ctx.fillStyle = PATH_COLOR;
+      } else if (visitedRef.current.has(node.id)) {
         ctx.fillStyle = VISITED_COLOR;
       } else if (node.id === activeNodeId) {
         ctx.fillStyle = SELECTED_COLOR;
+      } else if (node.id === goalNodeId) {
+        ctx.fillStyle = GOAL_COLOR;
       } else {
         ctx.fillStyle = NODE_COLOR;
       }
@@ -184,13 +226,7 @@ const GraphCanvas = ({
         onAddEdge(activeNodeId, clickedNode.id, validWeight);
         setActiveNodeId(null);
       } else {
-        const graph = buildAdjList();
-        const order =
-          graphAlgorithm === 'bfs'
-            ? bfs(graph, clickedNode.id)
-            : dfs(graph, clickedNode.id);
-
-        await animateTraversal(order);
+        onVisualize();
         setActiveNodeId(null);
       }
     }

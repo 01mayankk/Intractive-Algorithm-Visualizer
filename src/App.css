@@ -1,0 +1,96 @@
+/* App.css */
+.App {
+  text-align: center;
+}
+
+/* Additional styles for the algorithm visualizer */
+.visualizer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.array-container {
+  display: flex;
+  align-items: flex-end;
+  margin: 20px 0;
+}
+
+.array-bar {
+  width: 20px;
+  margin: 0 2px;
+  background-color: #3b82f6;
+  transition: all 0.3s ease;
+}
+
+.array-bar.comparing {
+  background-color: #ef4444;
+}
+
+.array-bar.swapping {
+  background-color: #10b981;
+}
+
+.array-bar.sorted {
+  background-color: #8b5cf6;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+.btn-success {
+  background-color: #10b981;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #059669;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.speed-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.speed-slider {
+  width: 100px;
+}

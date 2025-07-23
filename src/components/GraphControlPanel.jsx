@@ -14,6 +14,8 @@ const GraphControlPanel = ({
   isDirected = true,
   onToggleEdgeEdit = () => {},
   isEdgeEditMode = false,
+  onToggleGoalNodeSelect = () => {},
+  isGoalNodeSelectMode = false,
 }) => {
   const dispatch = useDispatch();
   const { graphAlgorithm, graphSpeed } = useSelector((state) => state.graph);
@@ -37,6 +39,8 @@ const GraphControlPanel = ({
         >
           <option value="bfs">Breadth First Search (BFS)</option>
           <option value="dfs">Depth First Search (DFS)</option>
+          <option value="dijkstra">Dijkstra's Algorithm</option>
+          <option value="aStar">A* Search</option>
           {/* Future Tree traversal options can be added here */}
         </select>
 
@@ -107,6 +111,17 @@ const GraphControlPanel = ({
           }`}
         >
           {isEdgeEditMode ? 'Edge Edit Mode ON' : 'Edge Edit Mode OFF'}
+        </button>
+
+        <button
+          onClick={onToggleGoalNodeSelect}
+          className={`px-4 py-2 rounded ${
+            isGoalNodeSelectMode
+              ? 'bg-teal-600 text-white hover:bg-teal-700'
+              : 'bg-teal-100 text-teal-800 hover:bg-teal-200'
+          }`}
+        >
+          {isGoalNodeSelectMode ? 'Select Goal Node ON' : 'Select Goal Node OFF'}
         </button>
       </div>
     </div>

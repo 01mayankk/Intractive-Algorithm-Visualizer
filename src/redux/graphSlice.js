@@ -13,6 +13,7 @@ const initialState = {
   edges: [],                  // { from, to, weight }
 
   selectedNode: null,         // For traversal start
+  goalNode: null,             // For pathfinding goal
   visitedNodes: [],           // For animation tracking
 };
 
@@ -43,10 +44,14 @@ const graphSlice = createSlice({
       state.nodes = [];
       state.edges = [];
       state.selectedNode = null;
+      state.goalNode = null;
       state.visitedNodes = [];
     },
     setSelectedNode: (state, action) => {
       state.selectedNode = action.payload;
+    },
+    setGoalNode: (state, action) => {
+      state.goalNode = action.payload;
     },
     setVisitedNodes: (state, action) => {
       state.visitedNodes = action.payload;
@@ -62,6 +67,7 @@ export const {
   setEdges,
   resetGraphState,
   setSelectedNode,
+  setGoalNode,
   setVisitedNodes,
 } = graphSlice.actions;
 

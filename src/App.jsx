@@ -3,9 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import SortingVisualizer from './pages/SortingVisualizer';
-import SearchingVisualizer from './pages/SearchingVisualizer';
-import GraphVisualizer from './pages/GraphVisualizer';
+import SortingVisualizer from './visualizers/SortingVisualizer';
+import SearchingVisualizer from './visualizers/SearchingVisualizer';
+import GraphVisualizer from './visualizers/GraphVisualizer';
+import DataStructuresVisualizer from './visualizers/DataStructuresVisualizer';
 
 import './App.css';
 
@@ -24,6 +25,7 @@ function App() {
               <Route path="/sorting" element={<SortingVisualizer ref={sortRef} />} />
               <Route path="/searching" element={<SearchingVisualizer />} />
               <Route path="/graph" element={<GraphVisualizer />} />
+              <Route path="/data-structures" element={<DataStructuresVisualizer />} />
             </Routes>
           </main>
         </div>

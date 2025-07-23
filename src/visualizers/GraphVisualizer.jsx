@@ -4,10 +4,13 @@ import GraphCanvas from '../components/GraphCanvas';
 import GraphControlPanel from '../components/GraphControlPanel';
 import { bfs } from '../algorithms/graph/bfs';
 import { dfs } from '../algorithms/graph/dfs';
+import { dijkstra } from '../algorithms/graph/dijkstra';
+import { aStar } from '../algorithms/graph/aStar';
 import {
   setNodes,
   setEdges,
   setSelectedNode,
+  setGoalNode,
   resetGraphState,
 } from '../redux/graphSlice';
 
@@ -23,10 +26,12 @@ const GraphVisualizer = () => {
     graphAlgorithm,
     graphSpeed,
     selectedNode,
+    goalNode,
   } = useSelector((state) => state.graph);
 
   const [isDirected, setIsDirected] = useState(false);
   const [isEdgeEditMode, setIsEdgeEditMode] = useState(false);
+  const [isGoalNodeSelectMode, setIsGoalNodeSelectMode] = useState(false);
 
   const onAddNode = (coords) => {
     const newNode = {
@@ -34,6 +39,15 @@ const GraphVisualizer = () => {
       ...coords,
     };
     dispatch(setNodes([...nodes, newNode]));
+  };
+
+  const onNodeClick = (nodeId) => {
+    if (isGoalNodeSelectMode) {
+      dispatch(setGoalNode(nodeId));
+      setIsGoalNodeSelectMode(false); // Turn off goal selection mode after selecting
+    } else {
+      dispatch(setSelectedNode(nodeId));
+    }
   };
 
   const onAddEdge = (fromId, toId, weight = 1) => {
@@ -80,33 +94,59 @@ const GraphVisualizer = () => {
   };
 
   const visualize = () => {
-    if (selectedNode === null) return;
+    if (selectedNode === null) {
+      alert('Please select a start node!');
+      return;
+    }
 
-    document.querySelectorAll('circle').forEach((c) =>
-      c.setAttribute('fill', PRIMARY_COLOR)
-    );
+    const animations = [];
+    if (graphAlgorithm === 'bfs') {
+      animations.push(...bfs(selectedNode, edges, isDirected));
+    } else if (graphAlgorithm === 'dfs') {
+      animations.push(...dfs(selectedNode, edges, isDirected));
+    } else if (graphAlgorithm === 'dijkstra') {
+      if (goalNode === null) {
+        alert('Please select a goal node!');
+        return;
+      }
+      if (goalNode === selectedNode) {
+        alert('Start and goal nodes cannot be the same!');
+        return;
+      }
+      animations.push(...dijkstra(selectedNode, goalNode, nodes, edges, isDirected));
+    } else if (graphAlgorithm === 'aStar') {
+      if (goalNode === null) {
+        alert('Please select a goal node!');
+        return;
+      }
+      if (goalNode === selectedNode) {
+        alert('Start and goal nodes cannot be the same!');
+        return;
+      }
+      const heuristic = (nodeA, nodeB) => {
+        if (!nodeA || !nodeB) return 0;
+        return Math.hypot(nodeA.x - nodeB.x, nodeA.y - nodeB.y);
+      };
+      animations.push(...aStar(selectedNode, goalNode, nodes, edges, isDirected, heuristic));
+    }
 
-    const animations =
-      graphAlgorithm === 'bfs'
-        ? bfs(selectedNode, edges, isDirected)
-        : dfs(selectedNode, edges, isDirected);
+    // This will be handled by the canvas now
+    // animations.forEach((step, i) => {
+    //   setTimeout(() => {
+    //     const node = nodes.find((n) => n.id === step.node);
+    //     if (!node) return;
 
-    animations.forEach((step, i) => {
-      setTimeout(() => {
-        const node = nodes.find((n) => n.id === step.node);
-        if (!node) return;
+    //     const selector = `circle[cx="${node.x}"][cy="${node.y}"]`;
+    //     const element = document.querySelector(selector);
 
-        const selector = `circle[cx="${node.x}"][cy="${node.y}"]`;
-        const element = document.querySelector(selector);
-
-        if (element) {
-          element.setAttribute('fill', ACTIVE_COLOR);
-          setTimeout(() => {
-            element.setAttribute('fill', VISITED_COLOR);
-          }, graphSpeed / 2);
-        }
-      }, i * graphSpeed);
-    });
+    //     if (element) {
+    //       element.setAttribute('fill', ACTIVE_COLOR);
+    //       setTimeout(() => {
+    //         element.setAttribute('fill', VISITED_COLOR);
+    //       }, graphSpeed / 2);
+    //     }
+    //   }, i * graphSpeed);
+    // });
   };
 
   return (
@@ -124,6 +164,8 @@ const GraphVisualizer = () => {
         onToggleEdgeEdit={() => setIsEdgeEditMode((prev) => !prev)}
         isDirected={isDirected}
         isEdgeEditMode={isEdgeEditMode}
+        onToggleGoalNodeSelect={() => setIsGoalNodeSelectMode((prev) => !prev)}
+        isGoalNodeSelectMode={isGoalNodeSelectMode}
       />
 
       <GraphCanvas
@@ -131,11 +173,13 @@ const GraphVisualizer = () => {
         edges={edges}
         onAddNode={onAddNode}
         onAddEdge={onAddEdge}
-        setActiveNodeId={(id) => dispatch(setSelectedNode(id))}
+        setActiveNodeId={onNodeClick}
         activeNodeId={selectedNode}
+        goalNodeId={goalNode}
         isDirected={isDirected}
         isEdgeEditMode={isEdgeEditMode}
         onUpdateEdgeWeight={onUpdateEdgeWeight}
+        onVisualize={visualize}
       />
     </div>
   );
