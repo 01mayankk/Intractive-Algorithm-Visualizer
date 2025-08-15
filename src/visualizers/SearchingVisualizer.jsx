@@ -17,6 +17,12 @@ const SearchingVisualizer = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [notFound, setNotFound] = useState(false);
 
+  // Time complexity information for search algorithms
+  const timeComplexity = {
+    'linearSearch': { best: 'O(1)', average: 'O(n)', worst: 'O(n)', space: 'O(1)' },
+    'binarySearch': { best: 'O(1)', average: 'O(log n)', worst: 'O(log n)', space: 'O(1)' }
+  };
+
   useEffect(() => {
     resetArray();
   }, [searchAlgorithm]);
@@ -110,6 +116,35 @@ const SearchingVisualizer = () => {
       <h2 className="text-2xl font-bold mb-4 text-indigo-700">
         Searching Visualizer
       </h2>
+
+      {/* Time Complexity Information */}
+      <div className="max-w-2xl mx-auto mb-6 bg-white rounded-xl p-4 shadow-lg border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-800 mb-3">⏱️ Time Complexity Analysis</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-3 border border-green-200">
+            <h4 className="font-semibold text-green-800 text-xs mb-1">Best Case</h4>
+            <p className="text-lg font-bold text-green-600">{timeComplexity[searchAlgorithm]?.best || 'N/A'}</p>
+          </div>
+          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-3 border border-yellow-200">
+            <h4 className="font-semibold text-yellow-800 text-xs mb-1">Average Case</h4>
+            <p className="text-lg font-bold text-yellow-600">{timeComplexity[searchAlgorithm]?.average || 'N/A'}</p>
+          </div>
+          <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-3 border border-red-200">
+            <h4 className="font-semibold text-red-800 text-xs mb-1">Worst Case</h4>
+            <p className="text-lg font-bold text-red-600">{timeComplexity[searchAlgorithm]?.worst || 'N/A'}</p>
+          </div>
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3 border border-blue-200">
+            <h4 className="font-semibold text-blue-800 text-xs mb-1">Space</h4>
+            <p className="text-lg font-bold text-blue-600">{timeComplexity[searchAlgorithm]?.space || 'N/A'}</p>
+          </div>
+        </div>
+        <div className="mt-3 p-2 bg-gray-50 rounded-lg border border-gray-200">
+          <p className="text-sm text-gray-600">
+            <strong>Algorithm:</strong> {searchAlgorithm === 'linearSearch' ? 'Linear Search' : 'Binary Search'} | 
+            <strong> Array Size:</strong> {array.length}
+          </p>
+        </div>
+      </div>
 
       <SearchControlPanel onReset={resetArray} onVisualize={visualize} />
 

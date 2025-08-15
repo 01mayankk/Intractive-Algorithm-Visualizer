@@ -4,7 +4,7 @@ const initialState = {
   // Sorting settings
   algorithm: 'bubbleSort',
   arraySize: 50,
-  speed: 50,
+  speed: 100,
   isSorting: false,
 
   // Searching settings

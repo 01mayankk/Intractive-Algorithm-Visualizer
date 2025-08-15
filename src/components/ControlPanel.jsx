@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAlgorithm, setArraySize, setSpeed } from '../redux/algoSlice';
+import { constrainSpeed } from '../utils/delay';
 
 const ControlPanel = ({ onReset, onVisualize }) => {
   const dispatch = useDispatch();
@@ -8,7 +9,7 @@ const ControlPanel = ({ onReset, onVisualize }) => {
 
   const handleAlgoChange = (e) => dispatch(setAlgorithm(e.target.value));
   const handleSizeChange = (e) => dispatch(setArraySize(Number(e.target.value)));
-  const handleSpeedChange = (e) => dispatch(setSpeed(Number(e.target.value)));
+  const handleSpeedChange = (e) => dispatch(setSpeed(constrainSpeed(Number(e.target.value))));
 
   return (
     <div className="w-full flex flex-col items-center gap-4 py-4">

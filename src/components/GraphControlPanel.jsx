@@ -4,6 +4,7 @@ import {
   setGraphAlgorithm,
   setGraphSpeed,
 } from '../redux/graphSlice';
+import { constrainSpeed } from '../utils/delay';
 
 const GraphControlPanel = ({
   onAddNode = () => {},
@@ -25,7 +26,7 @@ const GraphControlPanel = ({
   };
 
   const handleSpeedChange = (e) => {
-    dispatch(setGraphSpeed(Number(e.target.value)));
+    dispatch(setGraphSpeed(constrainSpeed(Number(e.target.value))));
   };
 
   return (
@@ -80,13 +81,39 @@ const GraphControlPanel = ({
         </label>
         <input
           type="range"
-          min="50"
+          min="100"
           max="1000"
           step="50"
           value={graphSpeed}
           onChange={handleSpeedChange}
           className="w-full"
         />
+      </div>
+
+      {/* === Time Complexity Information === */}
+      <div className="w-full max-w-2xl px-4">
+        <h4 className="text-center text-gray-700 font-medium mb-3">⏱️ Time Complexity Analysis</h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-2 border border-green-200">
+            <h5 className="font-semibold text-green-800 text-xs mb-1">BFS</h5>
+            <p className="text-sm font-bold text-green-600">O(V+E)</p>
+          </div>
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-2 border border-blue-200">
+            <h5 className="font-semibold text-blue-800 text-xs mb-1">DFS</h5>
+            <p className="text-sm font-bold text-blue-600">O(V+E)</p>
+          </div>
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-2 border border-purple-200">
+            <h5 className="font-semibold text-purple-800 text-xs mb-1">Dijkstra</h5>
+            <p className="text-sm font-bold text-purple-600">O(V²)</p>
+          </div>
+          <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-lg p-2 border border-pink-200">
+            <h5 className="font-semibold text-pink-800 text-xs mb-1">A*</h5>
+            <p className="text-sm font-bold text-pink-600">O(V log V)</p>
+          </div>
+        </div>
+        <div className="mt-2 text-center text-xs text-gray-500">
+          V = Vertices, E = Edges
+        </div>
       </div>
 
       {/* === Toggles === */}

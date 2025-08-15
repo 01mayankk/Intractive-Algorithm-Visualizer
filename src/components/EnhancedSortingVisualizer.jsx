@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { constrainSpeed } from '../utils/delay';
 
 const EnhancedSortingVisualizer = ({ array, algorithm, onComplete }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -10,6 +11,18 @@ const EnhancedSortingVisualizer = ({ array, algorithm, onComplete }) => {
   const [explanation, setExplanation] = useState('');
   const [animationType, setAnimationType] = useState('bubble');
   const intervalRef = useRef(null);
+
+  // Time complexity information for each algorithm
+  const timeComplexity = {
+    'Bubble Sort': { best: 'O(n)', average: 'O(n²)', worst: 'O(n²)', space: 'O(1)' },
+    'Quick Sort': { best: 'O(n log n)', average: 'O(n log n)', worst: 'O(n²)', space: 'O(log n)' },
+    'Merge Sort': { best: 'O(n log n)', average: 'O(n log n)', worst: 'O(n log n)', space: 'O(n)' },
+    'Insertion Sort': { best: 'O(n)', average: 'O(n²)', worst: 'O(n²)', space: 'O(1)' },
+    'Selection Sort': { best: 'O(n²)', average: 'O(n²)', worst: 'O(n²)', space: 'O(1)' },
+    'Heap Sort': { best: 'O(n log n)', average: 'O(n log n)', worst: 'O(n log n)', space: 'O(1)' },
+    'Counting Sort': { best: 'O(n+k)', average: 'O(n+k)', worst: 'O(n+k)', space: 'O(k)' },
+    'Radix Sort': { best: 'O(nk)', average: 'O(nk)', worst: 'O(nk)', space: 'O(n+k)' }
+  };
 
   useEffect(() => {
     if (array && array.length > 0) {
@@ -23,6 +36,23 @@ const EnhancedSortingVisualizer = ({ array, algorithm, onComplete }) => {
       setExplanation(steps[currentStep]?.explanation || '');
     }
   }, [currentStep, steps]);
+
+  // Update interval when speed changes
+  useEffect(() => {
+    if (isPlaying && intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = setInterval(() => {
+        setCurrentStep(prev => {
+          if (prev >= steps.length - 1) {
+            setIsPlaying(false);
+            clearInterval(intervalRef.current);
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, speed);
+    }
+  }, [speed, isPlaying, steps.length]);
 
   const generateSteps = () => {
     const newSteps = [];
@@ -676,7 +706,7 @@ const EnhancedSortingVisualizer = ({ array, algorithm, onComplete }) => {
             min="100"
             max="3000"
             value={speed}
-            onChange={(e) => setSpeed(parseInt(e.target.value))}
+            onChange={(e) => setSpeed(constrainSpeed(parseInt(e.target.value)))}
             className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
             style={{
               background: 'linear-gradient(to right, #ff6ec4, #7873f5)'
@@ -701,6 +731,34 @@ const EnhancedSortingVisualizer = ({ array, algorithm, onComplete }) => {
           <div className="text-center text-[#ff4e88] font-bold mt-2">
             Step {currentStep + 1} of {steps.length}
           </div>
+        </div>
+      </div>
+
+      {/* Time Complexity Information */}
+      <div className="bg-white rounded-2xl p-6 shadow-xl border border-gray-100">
+        <h3 className="text-xl font-semibold text-[#ff4e88] mb-4">⏱️ Time Complexity Analysis</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+            <h4 className="font-semibold text-green-800 text-sm mb-2">Best Case</h4>
+            <p className="text-2xl font-bold text-green-600">{timeComplexity[algorithm]?.best || 'N/A'}</p>
+          </div>
+          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-4 border border-yellow-200">
+            <h4 className="font-semibold text-yellow-800 text-sm mb-2">Average Case</h4>
+            <p className="text-2xl font-bold text-yellow-600">{timeComplexity[algorithm]?.average || 'N/A'}</p>
+          </div>
+          <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 border border-red-200">
+            <h4 className="font-semibold text-red-800 text-sm mb-2">Worst Case</h4>
+            <p className="text-2xl font-bold text-red-600">{timeComplexity[algorithm]?.worst || 'N/A'}</p>
+          </div>
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+            <h4 className="font-semibold text-blue-800 text-sm mb-2">Space Complexity</h4>
+            <p className="text-2xl font-bold text-blue-600">{timeComplexity[algorithm]?.space || 'N/A'}</p>
+          </div>
+        </div>
+        <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <p className="text-sm text-gray-600 text-center">
+            <strong>Algorithm:</strong> {algorithm} | <strong>Array Size:</strong> {array.length} | <strong>Total Steps:</strong> {steps.length}
+          </p>
         </div>
       </div>
 

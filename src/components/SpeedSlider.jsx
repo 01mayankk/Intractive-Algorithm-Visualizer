@@ -1,4 +1,5 @@
 import React from 'react';
+import { constrainSpeed } from '../utils/delay';
 
 const SpeedSlider = ({ speed, setSpeed, min = 100, max = 2000, step = 100 }) => {
   return (
@@ -10,7 +11,7 @@ const SpeedSlider = ({ speed, setSpeed, min = 100, max = 2000, step = 100 }) => 
         max={max}
         step={step}
         value={speed}
-        onChange={e => setSpeed(Number(e.target.value))}
+        onChange={e => setSpeed(constrainSpeed(Number(e.target.value)))}
         className="w-40 accent-blue-500"
       />
       <span className="text-sm">{speed} ms</span>

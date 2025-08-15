@@ -1,7 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { bfs } from '../algorithms/graph/bfs';
 import { dfs } from '../algorithms/graph/dfs';
+import { constrainSpeed } from '../utils/delay';
 
 const NODE_RADIUS = 20;
 const EDGE_COLOR = '#888';
@@ -51,7 +52,7 @@ const GraphCanvas = ({
         anim.nodes.forEach(nodeId => pathRef.current.add(nodeId));
       }
       drawGraph();
-      await new Promise((res) => setTimeout(res, graphSpeed));
+      await new Promise((res) => setTimeout(res, constrainSpeed(graphSpeed)));
     }
   };
 
@@ -192,7 +193,7 @@ const GraphCanvas = ({
     for (let i = 0; i < order.length; i++) {
       visitedRef.current.add(order[i]);
       drawGraph();
-      await new Promise((res) => setTimeout(res, graphSpeed));
+      await new Promise((res) => setTimeout(res, constrainSpeed(graphSpeed)));
     }
   };
 
