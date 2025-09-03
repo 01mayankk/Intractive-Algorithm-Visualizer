@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: interactive-algorithm-visualizer
+    env: static
+    buildCommand: npm run render-build
+    staticPublishPath: ./dist
+    envVars:
+      - key: NODE_VERSION
+        value: 18.x
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
