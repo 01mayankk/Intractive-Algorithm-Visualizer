@@ -101,6 +101,8 @@ function DSADashboard() {
 }
 
 import SearchingVisualizer from './DSA/Searching';
+import DijkstraVis from './DSA/Dijkstra';
+import DPVis from './DSA/DP';
 
 export default function DSA() {
   return (
@@ -108,6 +110,8 @@ export default function DSA() {
       <Route path="/" element={<DSADashboard />} />
       <Route path="/sorting" element={<SortingVisualizer />} />
       <Route path="/searching" element={<SearchingVisualizer />} />
+      <Route path="/graphs" element={<DijkstraVis />} />
+      <Route path="/dp" element={<DPVis />} />
     </Routes>
   );
 }

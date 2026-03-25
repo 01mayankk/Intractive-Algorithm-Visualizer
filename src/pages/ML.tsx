@@ -3,6 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LineChart, Network, Target, ScatterChart } from 'lucide-react';
 import LinearRegressionVis from './ML/LinearRegressionVis';
+import KMeansVis from './ML/KMeansVis';
 
 const mlModels = [
   {
@@ -18,7 +19,7 @@ const mlModels = [
     icon: ScatterChart,
     color: 'text-violet-500',
     bg: 'bg-violet-100 dark:bg-violet-900/30',
-    path: '#', // Placeholder
+    path: '/ml/kmeans',
     desc: 'Group data into K distinct clusters without predefined labels.'
   },
   {
@@ -85,6 +86,7 @@ export default function ML() {
     <Routes>
       <Route path="/" element={<MLDashboard />} />
       <Route path="/linear-regression" element={<LinearRegressionVis />} />
+      <Route path="/kmeans" element={<KMeansVis />} />
     </Routes>
   );
 }

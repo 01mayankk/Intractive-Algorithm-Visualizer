@@ -111,6 +111,32 @@ export default function SearchingVisualizer() {
         codeSnippet={LINEAR_SEARCH_CODE}
         explanationText={explanation}
         activeLine={activeLine}
+        complexities={{
+          best: "1",
+          average: "N/2",
+          worst: "N",
+          space: "1"
+        }}
+        theoryContent={
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold">Concept</h2>
+            <p>Linear search sequentially checks each element of the list until a match is found or the whole list has been searched.</p>
+            <h2 className="text-xl font-bold">Intuition</h2>
+            <p>Imagine reading a book page by page to find a specific word. You start at the beginning and check every single word until you find it.</p>
+          </div>
+        }
+        interviewContent={
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold">When to Use</h2>
+            <ul className="list-disc pl-5">
+              <li>When the list is small or unsorted.</li>
+              <li>When performing a single search on an unsorted dataset where sorting would take O(N log N).</li>
+            </ul>
+            <h2 className="text-xl font-bold">Common Variations</h2>
+            <p>- Finding multiple occurrences.</p>
+            <p>- Searching in a 2D matrix.</p>
+          </div>
+        }
         isPlaying={isPlaying}
         canStep={!isDone}
         speed={speed}

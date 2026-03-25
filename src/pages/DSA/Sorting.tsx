@@ -150,6 +150,31 @@ export default function SortingVisualizer() {
         codeSnippet={BUBBLE_SORT_CODE}
         explanationText={explanation}
         activeLine={activeLine}
+        complexities={{
+          best: "N",
+          average: "N²",
+          worst: "N²",
+          space: "1"
+        }}
+        theoryContent={
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Concept</h2>
+            <p>Bubble Sort is the simplest sorting algorithm that works by repeatedly swapping the adjacent elements if they are in the wrong order. This process is repeated until the array is sorted.</p>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Intuition</h2>
+            <p>Think of it like bubbles rising to the surface of water. In each pass, the largest unsorted element "bubbles up" to its correct position at the end of the array.</p>
+          </div>
+        }
+        interviewContent={
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Interview Questions</h2>
+            <ul className="list-disc pl-5">
+              <li><strong>Can Bubble Sort be optimized?</strong> Yes, by adding a boolean flag to track if any swaps occurred in the inner loop. If no swaps occurred, the array is already sorted, and we can terminate early.</li>
+              <li><strong>Is Bubble Sort stable?</strong> Yes, the relative order of items with equal values is preserved (we only swap if {'>'} not {'>='}).</li>
+            </ul>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Real-world Usage</h2>
+            <p>Bubble Sort is almost never used in production due to its O(N²) worst-case complexity. It is primarily used as an educational tool to introduce the concept of sorting algorithms.</p>
+          </div>
+        }
         isPlaying={isPlaying}
         canStep={!isSorted}
         speed={speed}

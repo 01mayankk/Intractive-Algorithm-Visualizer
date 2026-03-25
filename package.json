@@ -11,6 +11,7 @@
     "render-build": "npm install && npx vite build"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "@reduxjs/toolkit": "^1.9.7",
     "@types/d3": "^7.4.3",
     "@types/node": "^25.5.0",
