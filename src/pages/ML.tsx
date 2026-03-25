@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { LineChart, Network, Target, ScatterChart } from 'lucide-react';
 import LinearRegressionVis from './ML/LinearRegressionVis';
 import KMeansVis from './ML/KMeansVis';
+import QLearningGrid from './ML/QLearningGrid';
 
 const mlModels = [
   {
@@ -23,12 +24,12 @@ const mlModels = [
     desc: 'Group data into K distinct clusters without predefined labels.'
   },
   {
-    title: 'Q-Learning Agent',
+    title: 'Q-Learning (RL)',
     icon: Target,
-    color: 'text-emerald-500',
-    bg: 'bg-emerald-100 dark:bg-emerald-900/30',
-    path: '#', // Placeholder
-    desc: 'Reinforcement learning agent navigating a grid world to maximize rewards.'
+    color: 'text-rose-500',
+    bg: 'bg-rose-100 dark:bg-rose-900/30',
+    path: '/ml/q-learning',
+    desc: 'Train an agent in a Grid World to find the optimal policy and reach the goal.'
   }
 ];
 
@@ -87,6 +88,7 @@ export default function ML() {
       <Route path="/" element={<MLDashboard />} />
       <Route path="/linear-regression" element={<LinearRegressionVis />} />
       <Route path="/kmeans" element={<KMeansVis />} />
+      <Route path="/q-learning" element={<QLearningGrid />} />
     </Routes>
   );
 }

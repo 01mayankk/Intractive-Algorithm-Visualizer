@@ -3,10 +3,18 @@ import { Routes, Route } from 'react-router-dom';
 import SortingVisualizer from './DSA/Sorting';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, BarChart2, Search as SearchIcon, Network, Share2, Layers } from 'lucide-react';
+import { ArrowRight, BarChart2, Search as SearchIcon, Network, Share2, Layers, AlignLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const categories = [
+  {
+    title: 'Arrays & Strings',
+    icon: AlignLeft,
+    color: 'text-rose-500',
+    bg: 'bg-rose-100 dark:bg-rose-900/30',
+    path: '/dsa/arrays',
+    algorithms: ["Kadane's Algorithm", "Two Pointers"]
+  },
   {
     title: 'Sorting Algorithms',
     icon: BarChart2,
@@ -104,11 +112,13 @@ import SearchingVisualizer from './DSA/Searching';
 import DijkstraVis from './DSA/Dijkstra';
 import DPVis from './DSA/DP';
 import BSTVis from './DSA/BST';
+import KadaneVis from './DSA/Kadane';
 
 export default function DSA() {
   return (
     <Routes>
       <Route path="/" element={<DSADashboard />} />
+      <Route path="/arrays" element={<KadaneVis />} />
       <Route path="/sorting" element={<SortingVisualizer />} />
       <Route path="/searching" element={<SearchingVisualizer />} />
       <Route path="/graphs" element={<DijkstraVis />} />

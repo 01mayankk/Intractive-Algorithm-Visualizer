@@ -46,7 +46,7 @@ export default function KadaneVis() {
     setTempStart(0);
     setIsDone(false);
     setActiveLine(0);
-    setExplanation(`Initialized max_so_far = \${array[0]}, current_max = \${array[0]}. Started loop from index 1 (\${array[1]}).`);
+    setExplanation(`Initialized max_so_far = ${array[0]}, current_max = ${array[0]}. Started loop from index 1 (${array[1]}).`);
     setIsPlaying(false);
     if (timerRef.current) clearTimeout(timerRef.current);
   };
@@ -60,14 +60,14 @@ export default function KadaneVis() {
     if (activeLine === 0 || activeLine === 4 || activeLine === 7) {
       if (currentIndex >= array.length) {
          setActiveLine(10);
-         setExplanation(`Finished processing the array. The Maximum Subarray Sum is \${maxSoFar}.`);
+         setExplanation(`Finished processing the array. The Maximum Subarray Sum is ${maxSoFar}.`);
          setIsDone(true);
          setIsPlaying(false);
          return;
       }
       
       setActiveLine(5);
-      setExplanation(`Looking at index \${currentIndex} (value: \${array[currentIndex]}). Should we start a new subarray here, or extend the previous one?`);
+      setExplanation(`Looking at index ${currentIndex} (value: ${array[currentIndex]}). Should we start a new subarray here, or extend the previous one?`);
       return;
     }
 
@@ -78,9 +78,9 @@ export default function KadaneVis() {
       if (val > newCurrentMax) {
         setTempStart(currentIndex);
         newCurrentMax = val;
-        setExplanation(`Starting a new subarray is better! current_max = \${val}`);
+        setExplanation(`Starting a new subarray is better! current_max = ${val}`);
       } else {
-        setExplanation(`Extending current subarray is better: \${currentMax} + \${val} = \${newCurrentMax}`);
+        setExplanation(`Extending current subarray is better: ${currentMax} + ${val} = ${newCurrentMax}`);
       }
       
       setCurrentMax(newCurrentMax);
@@ -93,9 +93,9 @@ export default function KadaneVis() {
           setMaxSoFar(currentMax);
           setBestStart(tempStart);
           setBestEnd(currentIndex);
-          setExplanation(`Found a new global maximum sum! max_so_far is now \${currentMax}. Best subarray starts at index \${tempStart} and ends at \${currentIndex}.`);
+          setExplanation(`Found a new global maximum sum! max_so_far is now ${currentMax}. Best subarray starts at index ${tempStart} and ends at ${currentIndex}.`);
        } else {
-          setExplanation(`current_max (\${currentMax}) is not strictly greater than max_so_far (\${maxSoFar}). No global update.`);
+          setExplanation(`current_max (${currentMax}) is not strictly greater than max_so_far (${maxSoFar}). No global update.`);
        }
        setActiveLine(7);
        setCurrentIndex(idx => idx + 1);
@@ -182,7 +182,7 @@ export default function KadaneVis() {
                  <motion.div 
                    layout
                    key={idx}
-                   className={\`w-12 h-12 md:w-16 md:h-16 flex flex-col items-center justify-center font-bold text-xl border rounded-xl transition-all duration-300 relative \${bgClass}\`}
+                   className={`w-12 h-12 md:w-16 md:h-16 flex flex-col items-center justify-center font-bold text-xl border rounded-xl transition-all duration-300 relative ${bgClass}`}
                  >
                    {val}
                    <span className="absolute -bottom-6 text-xs text-slate-400 font-semibold">{idx}</span>
