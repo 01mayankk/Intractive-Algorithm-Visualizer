@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, RotateCcw, Plus, Minus, Settings2 } from 'lucide-react';
+import { Play, RotateCcw, Plus, Minus, Settings2, Network } from 'lucide-react';
 
 export default function NeuralNetworkVis() {
   const [layers, setLayers] = useState<number[]>([2, 4, 3, 1]); // input, hidden1, hidden2, output

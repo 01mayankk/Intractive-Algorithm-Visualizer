@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Twitter, Linkedin, Heart } from 'lucide-react';
+import { Globe, MessageSquare, Briefcase, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Footer() {
@@ -17,15 +17,15 @@ export default function Footer() {
             <div className="flex space-x-6 mt-6">
               <a href="https://github.com/01mayankk" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-slate-500 dark:hover:text-slate-300">
                 <span className="sr-only">GitHub</span>
-                <Github className="h-6 w-6" />
+                <Globe className="h-6 w-6" />
               </a>
               <a href="#" className="text-slate-400 hover:text-slate-500 dark:hover:text-slate-300">
                 <span className="sr-only">Twitter</span>
-                <Twitter className="h-6 w-6" />
+                <MessageSquare className="h-6 w-6" />
               </a>
               <a href="#" className="text-slate-400 hover:text-slate-500 dark:hover:text-slate-300">
                 <span className="sr-only">LinkedIn</span>
-                <Linkedin className="h-6 w-6" />
+                <Briefcase className="h-6 w-6" />
               </a>
             </div>
           </div>

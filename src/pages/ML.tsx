@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LineChart, Network, Target, ScatterChart } from 'lucide-react';
-import LinearRegressionVis from './LinearRegressionVis';
+import LinearRegressionVis from './ML/LinearRegressionVis';
 
 const mlModels = [
   {
