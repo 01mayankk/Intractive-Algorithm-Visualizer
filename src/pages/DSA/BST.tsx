@@ -72,14 +72,14 @@ export default function BSTVis() {
 
       queue.push({
         activeLine: 1,
-        explanation: `Called inorder() on Node \${node.val}.`,
+        explanation: `Called inorder() on Node ${node.val}.`,
         currentNode: nodeId,
         visited: [...vis],
       });
 
       queue.push({
         activeLine: 4,
-        explanation: `Node \${node.val} is not NULL. Recursively passing to the Left child.`,
+        explanation: `Node ${node.val} is not NULL. Recursively passing to the Left child.`,
         currentNode: nodeId,
         visited: [...vis],
       });
@@ -89,14 +89,14 @@ export default function BSTVis() {
       vis.push(node.val);
       queue.push({
         activeLine: 7,
-        explanation: `Back to Node \${node.val}. Visiting it now and appending to result!`,
+        explanation: `Back to Node ${node.val}. Visiting it now and appending to result!`,
         currentNode: nodeId,
         visited: [...vis],
       });
 
       queue.push({
         activeLine: 9,
-        explanation: `Recursively passing to the Right child of Node \${node.val}.`,
+        explanation: `Recursively passing to the Right child of Node ${node.val}.`,
         currentNode: nodeId,
         visited: [...vis],
       });
@@ -105,7 +105,7 @@ export default function BSTVis() {
       
       queue.push({
         activeLine: 10,
-        explanation: `Finished processing subtree for Node \${node.val}. Returning.`,
+        explanation: `Finished processing subtree for Node ${node.val}. Returning.`,
         currentNode: nodeId,
         visited: [...vis],
       });
@@ -224,13 +224,13 @@ export default function BSTVis() {
                 const edges = [];
                 if (node.left && bstNodes[node.left]) {
                   const target = bstNodes[node.left];
-                  edges.push(<line key={\`e-\${node.id}-l\`} x1={node.x} y1={node.y} x2={target.x} y2={target.y} className="stroke-slate-300 dark:stroke-slate-700" strokeWidth="0.5" />);
+                  edges.push(<line key={`e-${node.id}-l`} x1={node.x} y1={node.y} x2={target.x} y2={target.y} className="stroke-slate-300 dark:stroke-slate-700" strokeWidth="0.5" />);
                 }
                 if (node.right && bstNodes[node.right]) {
                   const target = bstNodes[node.right];
-                  edges.push(<line key={\`e-\${node.id}-r\`} x1={node.x} y1={node.y} x2={target.x} y2={target.y} className="stroke-slate-300 dark:stroke-slate-700" strokeWidth="0.5" />);
+                  edges.push(<line key={`e-${node.id}-r`} x1={node.x} y1={node.y} x2={target.x} y2={target.y} className="stroke-slate-300 dark:stroke-slate-700" strokeWidth="0.5" />);
                 }
-                return <g key={\`edges-\${node.id}\`}>{edges}</g>;
+                return <g key={`edges-${node.id}`}>{edges}</g>;
               })}
 
               {/* Nodes */}
@@ -255,14 +255,14 @@ export default function BSTVis() {
                     
                     <circle 
                       cx={node.x} cy={node.y} r="5" 
-                      className={\`\${fillClass} \${strokeClass} transition-colors duration-300\`} 
+                      className={`${fillClass} ${strokeClass} transition-colors duration-300`} 
                       strokeWidth="0.5" 
                     />
                     <text 
                       x={node.x} y={node.y + 1.2} 
                       textAnchor="middle" 
                       fontSize="3.5" 
-                      className={\`\${isCurrent || isVis ? 'fill-white' : 'fill-slate-700 dark:fill-slate-300'} font-bold font-mono\`}
+                      className={`${isCurrent || isVis ? 'fill-white' : 'fill-slate-700 dark:fill-slate-300'} font-bold font-mono`}
                     >
                       {node.val}
                     </text>

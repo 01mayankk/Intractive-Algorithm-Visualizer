@@ -103,6 +103,7 @@ function DSADashboard() {
 import SearchingVisualizer from './DSA/Searching';
 import DijkstraVis from './DSA/Dijkstra';
 import DPVis from './DSA/DP';
+import BSTVis from './DSA/BST';
 
 export default function DSA() {
   return (
@@ -112,6 +113,7 @@ export default function DSA() {
       <Route path="/searching" element={<SearchingVisualizer />} />
       <Route path="/graphs" element={<DijkstraVis />} />
       <Route path="/dp" element={<DPVis />} />
+      <Route path="/trees" element={<BSTVis />} />
     </Routes>
   );
 }
